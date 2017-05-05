@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<robot name="fira6" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- root link, on the ground just below the model origin -->
+  <link name="base_footprint">
+   <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.001 0.001 0.001" />
+      </geometry>
+    </visual>
+  </link>
+  <joint name="world_joint" type="fixed">
+    <origin xyz="0.0 0 0" rpy="0 0 0" />
+    <parent link="base_footprint" />
+    <child link="base"/>
+  </joint>
+  <link name="base">
+   <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.001 0.001 0.001" />
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="base_link_joint" type="fixed">
+    <origin xyz="0.0 0 1.05" rpy="0 0 0" />
+    <parent link="base" />
+    <child link="scanner_base"/>
+  </joint>
+
+  <!-- the model -->
+  <link name="scanner_base">
+    <inertial>
+      <mass value="50" />
+      <origin xyz="0 0 -1.25" />
+      <inertia ixx="50.0" ixy="0.0" ixz="0.0"
+        iyy="50.0" iyz="0.0"
+        izz="50.0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0.04 -1.45" rpy="0 0 1.57" />
+      <!--origin xyz="0 0 -1.62" rpy="0 0 1.57" /-->
+      <geometry>
+	<mesh filename="package://fira6_description/meshes/fira6.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -1.0" />
+      <geometry>
+        <cylinder length="0.1" radius="0.25" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="hokuyo_joint1" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0.025 0 -0.45" rpy="0 0 0"/>
+    <parent link="scanner_base"/>
+    <child link="front_scanner"/>
+  </joint>
+
+  <!-- Hokuyo Laser 1 -->
+  <link name="front_scanner">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://fira6_description/meshes/hokuyo.dae"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <!-- hokuyo -->
+  <gazebo reference="front_scanner">
+    <sensor type="ray" name="front_scanner">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>false</visualize>
+      <update_rate>60</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>180</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.570796</min_angle>
+            <max_angle>1.570796</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>30.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise parameters based on published spec for Hokuyo laser
+               achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+               stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+               reading. -->
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+        <topicName>/front_scan</topicName>
+        <frameName>front_scanner</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
+  <joint name="hokuyo_joint2" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="-0.025 0 -0.45" rpy="0 0 3.14"/>
+    <parent link="scanner_base"/>
+    <child link="rear_scanner"/>
+  </joint>
+
+  <!-- Hokuyo Laser 2 -->
+  <link name="rear_scanner">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://fira6_description/meshes/hokuyo.dae"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <!-- hokuyo -->
+  <gazebo reference="rear_scanner">
+    <sensor type="ray" name="rear_scanner">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>false</visualize>
+      <update_rate>60</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>180</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.570796</min_angle>
+            <max_angle>1.570796</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>30.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise parameters based on published spec for Hokuyo laser
+               achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+               stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+               reading. -->
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+        <topicName>/rear_scan</topicName>
+        <frameName>rear_scanner</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
+      <commandTopic>/cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometryRate>20.0</odometryRate>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+    </plugin>
+  </gazebo>
+
+  <!-- Base link -->
+  <gazebo reference="scanner_base">
+    <!--material>Gazebo/CloudySky</material-->
+    <material>Gazebo/FlatBlack</material>
+  </gazebo>
+
+</robot>

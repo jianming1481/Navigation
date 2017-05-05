@@ -1,0 +1,8 @@
+global_frame: odom
+rolling_window: true
+track_unknown_space: true
+
+plugins:
+   - {name: static_map,       type: "costmap_2d::StaticLayer"}
+   - {name: obstacles,        type: "costmap_2d::VoxelLayer"}
+

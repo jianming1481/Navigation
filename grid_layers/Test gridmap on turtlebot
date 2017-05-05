@@ -1,0 +1,3 @@
+roslaunch rbx1_bringup fake_turtlebot.launch
+roslaunch rbx1_nav fake_move_base_blank_map.launch  
+rosrun rviz rviz

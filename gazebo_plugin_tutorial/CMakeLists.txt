@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+
+find_package(gazebo REQUIRED)
+include_directories(${GAZEBO_INCLUDE_DIRS})
+link_directories(${GAZEBO_LIBRARY_DIRS})
+list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
+
+add_library(hello_world SHARED src/hello_world.cc)
+target_link_libraries(hello_world ${GAZEBO_LIBRARIES})
+add_library(diffdrive SHARED src/DiffDrivePlugin.cc)
+target_link_libraries(diffdrive ${GAZEBO_LIBRARIES})
+add_library(motion_test SHARED src/test.cc)
+target_link_libraries(motion_test ${GAZEBO_LIBRARIES})
+add_library(3w_motion SHARED src/3w_motion.cc)
+target_link_libraries(3w_motion ${GAZEBO_LIBRARIES})
+add_library(diffdrive_test SHARED src/DiffDrivePlugin_test.cc)
+target_link_libraries(diffdrive_test ${GAZEBO_LIBRARIES})
+add_library(wu_omni SHARED src/wu_omni.cc)
+target_link_libraries(wu_omni ${GAZEBO_LIBRARIES})	
+

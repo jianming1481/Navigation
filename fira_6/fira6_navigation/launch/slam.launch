@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+<node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" respawn="false" output="screen">
+    <param name="base_frame"               value="scanner_base"/>
+</node>
+</launch>

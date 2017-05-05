@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find fira6_control)/config/fira6_control.yaml" command="load"/>
+
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+        output="screen" ns="/fira6" args="fira_joint_publisher
+				      fira_wl_velocity_controller 
+				      fira_wr_velocity_controller 
+				      fira_wb_velocity_controller ">
+  </node>
+
+</launch>

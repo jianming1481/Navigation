@@ -1,0 +1,133 @@
+#include<simple_layers/simple_layer.h>
+#include <pluginlib/class_list_macros.h>
+
+PLUGINLIB_EXPORT_CLASS(simple_layer_namespace::SimpleLayer, costmap_2d::Layer)
+
+using costmap_2d::LETHAL_OBSTACLE;
+
+namespace simple_layer_namespace
+{
+
+SimpleLayer::SimpleLayer() {}
+
+void SimpleLayer::onInitialize()
+{
+  ros::NodeHandle nh("~/" + name_);
+  current_ = true;
+
+  //obstacle_sub = nh.subscribe("/obstacles",1,&SimpleLayer::obstacle_detector_CB, this);
+  //reset_map_client = nh.serviceClient<std_srvs::Empty>("/move_base/clear_costmaps");
+  obstacle_sub = nh.subscribe("/pre_obstacles_pose",1,&SimpleLayer::obstacle_detector_CB, this);
+  dsrv_ = new dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>(nh);
+  dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>::CallbackType cb = boost::bind(
+      &SimpleLayer::reconfigureCB, this, _1, _2);
+  dsrv_->setCallback(cb);
+}
+
+/*void SimpleLayer::obstacle_detector_CB(const std_msgs::Int32::ConstPtr& msg) {
+  ROS_INFO("I heard: [%d]", msg->data);
+  ob_x = msg->data;
+}*/
+/*void SimpleLayer::obstacle_detector_CB(const obstacle_detector::Obstacles::ConstPtr& msg) {
+  for(int i=0;i < msg->circles.size();i++)
+  {
+    obstacles_.circles[i].center.x = msg->circles[i].center.x;
+    obstacles_.circles[i].center.y = msg->circles[i].center.y;
+    obstacles_.circles[i].velocity.x = msg->circles[i].velocity.x;
+    obstacles_.circles[i].velocity.y = msg->circles[i].velocity.y;
+
+    //ROS_INFO("Obstacle_%d:\n",i);
+    //ROS_INFO("I heard X: [%f]\n", msg->circles[i].center.x);
+    //ROS_INFO("I heard Y: [%f]\n", msg->circles[i].center.y);
+    //ROS_INFO("I heard X: [%f]\n", tmp_x);
+    //ROS_INFO("I heard y: [%f]\n", tmp_y);
+  }
+}*/
+void SimpleLayer::obstacle_detector_CB(const geometry_msgs::Twist::ConstPtr& msg) {
+  tmp_x = msg->linear.x;
+  tmp_y = msg->linear.y;
+  // printf("I heard x: [%f]\t", msg->linear.x);
+  // printf("I heard y: [%f]\n", msg->linear.y);
+  // printf("obstacle_x: %f, obstacle_y:%f\n",tmp_x,tmp_y);
+}
+
+void SimpleLayer::reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level)
+{
+  enabled_ = config.enabled;
+}
+
+void SimpleLayer::updateBounds(double origin_x, double origin_y, double origin_yaw, double* min_x,
+                                           double* min_y, double* max_x, double* max_y)
+{
+  if (!enabled_)
+    return;
+
+  //reset_map_client.call(reset_map_empty);
+  /*for(int i=0;i < obstacles_.circles.size();i++)
+  {
+    tmp_x = obstacles_.circles[i].center.x;
+    tmp_y = obstacles_.circles[i].center.y;
+  }*/
+
+  if(tmp_x<0.00001 && tmp_x>-0.00001)
+  {
+    tmp_x = 20;
+    //printf("No data from obstacle_map!\n");
+  }
+  if(tmp_y<0.00001 && tmp_y>-0.00001)
+  {
+    tmp_y = 20;
+    //printf("No data from obstacle_map!\n");
+  }
+  double tmp_dist = hypot(tmp_x,tmp_y);
+  double tmp_angle = acos(tmp_x/tmp_dist);
+  //printf("obstacle_angle: %f\n",tmp_angle/3.14*180);
+  //printf("%f\n",tmp_dist);
+
+  if(tmp_x > 0 && tmp_y >0)
+  {
+    // printf("First block\n");
+  }else if(tmp_x < 0 && tmp_y > 0 )
+  {
+    // printf("Second block\n");
+  }else if(tmp_x < 0 && tmp_y < 0)
+  {
+    tmp_angle = tmp_angle*-1;
+    // printf("Third block\n");
+  }else if(tmp_x > 0 && tmp_y < 0)
+  {
+    tmp_angle = tmp_angle*-1;
+    // printf("Forth block\n");
+  }
+  //printf("robot_x: %f \t robot_y:%f \t robot_yaw:%f\n",origin_x,origin_y,origin_yaw/3.14*180);
+  //printf("%f\n",(tmp_angle+origin_yaw)/3.14*180);
+  mark_x_ = origin_x + tmp_dist*cos(tmp_angle+origin_yaw);
+  mark_y_ = origin_y + tmp_dist*sin(tmp_angle+origin_yaw);
+
+  //printf("robot_x: %f, robot_y:%f\n",origin_x,origin_y);
+
+  *min_x = std::min(*min_x, mark_x_);
+  *min_y = std::min(*min_y, mark_y_);
+  *max_x = std::max(*max_x, mark_x_);
+  *max_y = std::max(*max_y, mark_y_);
+  //printf("UpdateBounds Function!!!\n");
+  //printf("obstacle_x: %f, obstacle_y:%f\n",tmp_x,tmp_y);
+  //printf("min_x: %f, min_y:%f, max_x:%f, max_y:%f \n",min_x,min_y,max_x,max_y);
+}
+
+void SimpleLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i,
+                                          int max_j)
+{
+  if (!enabled_)
+    return;
+  unsigned int mx;
+  unsigned int my;
+  if(master_grid.worldToMap(mark_x_, mark_y_, mx, my)){
+    master_grid.setCost(mx, my, LETHAL_OBSTACLE);
+    //printf("UpdateCosts Function!!!\n");
+    //printf("mark_y_: %f, mark_y_:%f\n",mark_x_,mark_y_);
+    //printf("mx: %d, my:%d\n",mx,my);
+  }
+}
+
+} // end namespace

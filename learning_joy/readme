@@ -1,0 +1,3 @@
+sudo python setup.py install
+
+install pygame and math3d

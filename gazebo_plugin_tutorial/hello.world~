@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+  <world name="default">
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <include>
+      <uri>model://my_robot</uri>
+      <pose>0 0 0 0 0 0</pose>
+      <name>robot1</name>
+    </include>
+    <plugin name="hello_world" filename="libhello_world.so"/>
+    <plugin name="dfd" filename="libdiffdrive.so">
+            <alwaysOn>true</alwaysOn>
+            <updateRate>10</updateRate>
+            <left_joint>left_wheel_hinge</left_joint>
+            <right_joint>right_wheel_hinge</right_joint>
+            <wheelSeparation>0.5380</wheelSeparation>
+            <wheelDiameter>0.2410</wheelDiameter>
+            <torque>20</torque>
+            <commandTopic>cmd_vel</commandTopic>
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>odom</odometryFrame>
+            <robotBaseFrame>base_footprint</robotBaseFrame>
+            <robotNamespace>gz</robotNamespace>
+     </plugin>
+  </world>
+</sdf>

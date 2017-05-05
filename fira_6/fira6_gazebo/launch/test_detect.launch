@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find fira6_gazebo)/launch/fira6_fake_omni_empty_world.launch">
+    <arg name="world_name" value="$(find fira6_gazebo)/worlds/test_detect.world"/>
+  </include>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+	respawn="false" output="screen">
+    <remap from="/joint_states" to="/fira/joint_states" />
+  </node>
+
+  <node pkg="obstacle_detector" type="scans_merger_node" name="scans_merger">
+    <param name="active"            value="true"/>
+    <param name="publish_scan"      value="true"/>
+    <param name="publish_pcl"       value="false"/>
+
+    <param name="ranges_num"        value="3000"/>
+
+    <param name="min_scanner_range" value="0.05"/>
+    <param name="max_scanner_range" value="10.0"/>
+
+    <param name="min_x_range"       value="-5.0"/>
+    <param name="max_x_range"       value="5.0"/>
+    <param name="min_y_range"       value="-5.0"/>
+    <param name="max_y_range"       value="5.0"/>
+
+    <param name="frame_id"          value="scanner_base"/>
+  </node>
+</launch>

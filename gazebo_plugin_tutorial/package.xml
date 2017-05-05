@@ -1,0 +1,20 @@
+<package>
+  <name>gazebo_plugin_tutorial</name>
+  <version>0.1.0</version>
+  <description>gazebo_plugin_tutorial</description>
+  <maintainer email="jianming1481@gmail.com">Chien-Ming Lin</maintainer>
+
+  <license>BSD</license>
+
+  <author email="jianming1481@gmail.com">Chien-Ming Lin</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>rbot_description</run_depend>
+  <run_depend>rbot_control</run_depend> 
+  <run_depend>gazebo_ros</run_depend> 
+
+  <export>
+	<gazebo_ros plugin_path="/home/jianming/catkin_ws/devel/lib"/>
+  </export>
+</package>

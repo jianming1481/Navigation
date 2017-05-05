@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package>
+  <name>fira6_control</name>
+  <version>0.0.0</version>
+  <description>The bumblebee_control package</description>
+
+  <maintainer email="jianming1481@gmail.com">Chien-Ming Lin</maintainer>
+
+  <license>BSD</license>
+
+  <author email="jianming1481@gmail.com">Chien-Ming Lin</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>controller_manager</run_depend>
+
+  <export>
+  </export>
+
+</package>

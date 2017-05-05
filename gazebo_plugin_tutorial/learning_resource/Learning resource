@@ -1,0 +1,20 @@
+--Learn how to control your robot in Gazebo
+	http://www.romin.upm.es/wiki/index.php?title=ROS%3ATutorials/Control_Your_Robot
+
+--Gazebo Diff_drive source code
+	http://docs.ros.org/jade/api/gazebo_plugins/html/gazebo__ros__diff__drive_8h_source.html
+
+--Many tutorial about Gazebo
+	http://www.theconstructsim.com/category/gazebo-material/
+
+--Gazebo offical website plugin tutorial
+	http://gazebosim.org/tutorials?tut=plugins_model&cat=write_plugin
+
+--How to Get Velocity of a joint using API ?
+	http://answers.gazebosim.org/question/8768/how-to-get-velocity-of-a-joint-using-api/
+
+--Something more information
+	http://answers.ros.org/question/45122/problems-to-move-the-wheels-with-a-pid-controller/
+	http://wiki.ros.org/pr2_controller_interface
+	http://wiki.ros.org/pr2_mechanism/Tutorials/Running%20a%20realtime%20joint%20controller
+	http://wiki.ros.org/pr2_mechanism/Tutorials

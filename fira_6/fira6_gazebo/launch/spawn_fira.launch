@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find fira6_description)/urdf/omnidrive.xacro'" />
+  <!--param name="robot_description" command="$(find xacro)/xacro.py '$(find rbx2_description)/urdf/box_robot/base.urdf.xacro'" /-->
+  <!-- Spawn robot in gazebo -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+	args="-urdf -model omni_robot -param robot_description"/>
+
+</launch>
